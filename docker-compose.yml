@@ -3,7 +3,7 @@ version: "3.9"
 services:
   linkchecker:
     build:
-      context: .
+      context: compose
       dockerfile: docker/Dockerfile
     image: linkchecker:latest
     container_name: linkchecker
