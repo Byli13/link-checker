@@ -3,7 +3,7 @@ version: "3.9"
 services:
   linkchecker:
     build:
-      context: compose
+      context: .                 # <— racine du repo
       dockerfile: docker/Dockerfile
     image: linkchecker:latest
     container_name: linkchecker
@@ -30,11 +30,9 @@ services:
       DRY_RUN: ${DRY_RUN:-1}                     # 1 pour test (aucun envoi)
       RUN_ON_START: ${RUN_ON_START:-1}           # lance un check au démarrage
 
-    # Monte un petit cache pour éviter de re-signaler tous les jours les mêmes liens
     volumes:
       - linkchecker_state:/state
 
-    # Injecte les secrets Portainer (à créer côté Portainer)
     secrets:
       - github_token
       - discord_webhook
