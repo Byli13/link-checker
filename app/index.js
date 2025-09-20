@@ -2,6 +2,7 @@ import { listJsonFiles, getJsonFile } from './github.js';
 import { extractUrlsFromJson } from './extract.js';
 import { checkUrls } from './checker.js';
 import { sendReport } from './report.js';
+import { log, err } from './logger.js';
 import fs from 'node:fs/promises';
 
 // TZ pour cron
