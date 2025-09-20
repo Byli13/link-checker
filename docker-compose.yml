@@ -5,7 +5,6 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    image: linkchecker:latest
     container_name: linkchecker
     restart: unless-stopped
 
