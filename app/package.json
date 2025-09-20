@@ -1,0 +1,12 @@
+{
+  "name": "linkchecker",
+  "version": "1.0.0",
+  "description": "Vérifie quotidiennement les liens GIF dans les JSON du repo bot et envoie un rapport sur un webhook Discord.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "health": "node healthcheck.js"
+  },
+  "dependencies": {}
+}

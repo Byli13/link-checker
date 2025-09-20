@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  linkchecker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: linkchecker:latest
+    container_name: linkchecker
+    restart: unless-stopped
+
+    environment:
+      # Cible GitHub (branche = ce que tu veux vérifier)
+      GITHUB_OWNER: ${GITHUB_OWNER}
+      GITHUB_NAME: ${GITHUB_NAME}
+      GITHUB_BRANCH: ${GITHUB_BRANCH:-main}
+      INCLUDE_PATHS: ${INCLUDE_PATHS:-data/}
+
+      # Réseau & contrôle
+      HTTP_TIMEOUT_MS: ${HTTP_TIMEOUT_MS:-10000}
+      HTTP_RETRIES: ${HTTP_RETRIES:-1}
+      HTTP_CONCURRENCY: ${HTTP_CONCURRENCY:-12}
+      ALLOWED_MIME_PREFIXES: ${ALLOWED_MIME_PREFIXES:-image/,video/}
+
+      # Planification & logs
+      TIMEZONE: ${TIMEZONE:-Europe/Paris}
+      CRON_SCHEDULE: ${CRON_SCHEDULE:-0 9,21 * * *}
+      REPORT_MODE: ${REPORT_MODE:-only-errors}   # only-errors | always
+      REPORT_BATCH_SIZE: ${REPORT_BATCH_SIZE:-20}
+      DRY_RUN: ${DRY_RUN:-1}                     # 1 pour test (aucun envoi)
+      RUN_ON_START: ${RUN_ON_START:-1}           # lance un check au démarrage
+
+    # Monte un petit cache pour éviter de re-signaler tous les jours les mêmes liens
+    volumes:
+      - linkchecker_state:/state
+
+    # Injecte les secrets Portainer (à créer côté Portainer)
+    secrets:
+      - github_token
+      - discord_webhook
+
+    healthcheck:
+      test: ["CMD", "node", "/app/healthcheck.js"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+secrets:
+  github_token:
+    external: true
+  discord_webhook:
+    external: true
+
+volumes:
+  linkchecker_state:
